@@ -2,6 +2,8 @@
 import argparse
 import os
 import sys
+import whisper
+import torch
 from app.process_srt import convert_srt_to_txt
 from app.ai_summarizer import summarize_text, extract_text, get_all_file
 from app.md2docx import convert_md_to_docx
@@ -48,6 +50,16 @@ def convert_srt_to_txt_files(input_path, output_dir=None):
             if video_files:
                 logger.info(f"No SRT files found, but {len(video_files)} video files detected. Generating SRT files...")
                 console.print("[warning]No SRT files found, but video files detected. Generating SRT files...[/warning]")
+
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+                logger.info(f"Running on: {device.upper()}")
+                print(f"🔥 Running on: {device.upper()}")
+
+                logger.info("Loading Whisper model...")
+                print("🚀 Memuat model Whisper...")
+                model = whisper.load_model(
+                    "small", device=device
+                )  # Bisa ganti "tiny", "base", "medium", "large"
                 
                 # Generate SRT files from video files
                 with Progress(
@@ -61,8 +73,12 @@ def convert_srt_to_txt_files(input_path, output_dir=None):
                     
                     for video_file in video_files:
                         logger.debug(f"Transcribing video: {video_file}")
+                        if not os.path.isfile(video_file):
+                            logger.error(f"File tidak ditemukan: {video_file}")
+                            print(f"File tidak ditemukan: {video_file}")
+                            return
                         progress.update(transcribe_task, description=f"[highlight]Transcribing: {os.path.basename(video_file)}[/highlight]")
-                        transcribe_to_srt(video_file)
+                        transcribe_to_srt(model, video_file)
                         srt_path = os.path.splitext(video_file)[0] + ".srt"
                         srt_files.append(srt_path)
                         progress.update(transcribe_task, advance=1)

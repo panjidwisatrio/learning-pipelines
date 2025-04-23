@@ -1,35 +1,16 @@
-import whisper
 import os
 import sys
 from app.logger import get_logger
-import torch
 
 # Initialize logger for this module
 logger = get_logger("generate_srt")
 
-def transcribe_to_srt(video_path):
-    if not os.path.isfile(video_path):
-        logger.error(f"File tidak ditemukan: {video_path}")
-        print(f"File tidak ditemukan: {video_path}")
-        return
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    logger.info(f"Running on: {device.upper()}")
-    print(f"🔥 Running on: {device.upper()}")
-
-    logger.info("Loading Whisper model...")
-    print("🚀 Memuat model Whisper...")
-    model = whisper.load_model(
-        "small", device=device
-    )  # Bisa ganti "tiny", "base", "medium", "large"
-    
-    logger.info(f"Processing video: {video_path}")    
-    print(f"🎬 Memproses video: {video_path}")
+def transcribe_to_srt(model, video_path):
+    logger.info(f"Processing video: {video_path}")
     result = model.transcribe(video_path, task="transcribe", verbose=False)
 
     srt_path = os.path.splitext(video_path)[0] + ".srt"
     logger.info(f"Writing results to: {srt_path}")
-    print(f"📝 Menulis hasil ke: {srt_path}")
 
     with open(srt_path, "w", encoding="utf-8") as srt_file:
         for i, segment in enumerate(result["segments"], start=1):
@@ -40,7 +21,6 @@ def transcribe_to_srt(video_path):
             srt_file.write(f"{i}\n{start} --> {end}\n{text}\n\n")
 
     logger.info("Transcription completed successfully")
-    print("✅ Berhasil! Subtitle telah dibuat.")
 
 
 def format_timestamp(seconds):
