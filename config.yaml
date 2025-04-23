@@ -1,0 +1,48 @@
+# LinkedIn Learning Pipeline Configuration
+
+# OpenAI API Configuration
+openai:
+  model: "qwen2.5-7b-instruct-1m"
+  temperature: 0.7
+  api_key: "YOUR_OPENAI_API_KEY"
+  base_url: "http://10.16.17.42:1234/v1"
+  max_tokens: 4000
+  timeout: 60
+
+# File Paths Configuration
+paths:
+  default_output_dir: "output"
+  temp_dir: "temp"
+  log_dir: "logs"
+
+# Processing Options
+processing:
+  # SRT to TXT options
+  srt2txt:
+    extract_text_only: true
+    remove_timestamps: true
+    combine_sentences: true
+  
+  # TXT to MD options
+  txt2md:
+    include_timestamps: false
+    include_summary: true
+    include_key_points: true
+  
+  # MD to DOCX options
+  md2docx:
+    add_table_of_contents: true
+    add_page_numbers: true
+    template_file: ""  # Optional path to a template .docx file
+
+# Logging Options
+logging:
+  level: "info"  # Options: debug, info, warning, error
+  log_to_file: true
+  log_to_console: true
+
+# UI Options
+ui:
+  color_theme: "default"  # Options: default, dark, light, monochrome
+  show_progress_bars: true
+  show_spinners: true

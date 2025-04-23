@@ -1,0 +1,13 @@
+pypandoc
+markdown
+python-docx
+beautifulsoup4
+openai
+torch
+ffmpeg-python
+torch
+torchaudio
+--extra-index-url https://download.pytorch.org/whl/cu118
+rich
+
+git+https://github.com/openai/whisper.git
