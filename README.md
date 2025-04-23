@@ -1,15 +1,38 @@
-# LinkedIn Learning Pipeline
+# Learning Pipeline
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.6%2B-brightgreen.svg)
 
-A comprehensive pipeline for processing LinkedIn Learning videos, generating subtitles, summarizing content, and creating structured documents.
+A comprehensive pipeline for processing learning videos, generating subtitles, summarizing content, and creating structured documents.
+
+## Table of Contents
+- [Background](#background)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [System Requirements](#system-requirements)
+  - [Setup](#setup)
+- [Usage](#usage)
+  - [Basic Usage](#basic-usage)
+  - [Examples](#examples)
+  - [Transcribing Videos](#transcribing-videos)
+- [Application Flow](#application-flow)
+- [Folder Structure](#folder-structure)
+- [Configuration](#configuration)
+  - [AI Model Configuration](#ai-model-configuration)
+  - [Processing Options](#processing-options)
+  - [UI Options](#ui-options)
+  - [Logging Configuration](#logging-configuration)
+- [Troubleshooting](#troubleshooting)
+  - [Common Issues](#common-issues)
+  - [Logs](#logs)
+- [License](#license)
+- [Credits](#credits)
 
 ## Background
 
-The LinkedIn Learning Pipeline is a tool designed to enhance the learning experience with LinkedIn Learning courses. It automates the process of converting videos to text content through transcription, summarization, and document generation. This tool helps users:
+The Learning Pipeline is a tool designed to enhance the learning experience. It automates the process of converting videos to text content through transcription, summarization, and document generation. This tool helps users:
 
-- Transcribe LinkedIn Learning videos to SRT subtitle format
+- Transcribe learning videos to SRT subtitle format
 - Convert subtitles to plain text 
 - Generate AI-powered summaries and key points from video content
 - Create well-formatted Markdown and DOCX documents from the processed content
@@ -26,12 +49,32 @@ This pipeline streamlines the process of creating structured documentation and s
 - GPU support (optional, for faster transcription)
 - PyTorch with CUDA (optional, for GPU acceleration)
 
+### System Requirements
+
+For optimal performance, the following system specifications are recommended:
+
+- **CPU**: Quad-core processor or better (Intel i5/i7 or AMD Ryzen 5/7)
+- **RAM**: Minimum 8GB, recommended 16GB or higher
+- **Storage**: At least 10GB free disk space for application and dependencies
+- **GPU**: NVIDIA GPU with 4GB+ VRAM for transcription acceleration
+- **Internet Connection**: Required for AI model downloads and API communication
+- **Operating System**:
+  - Windows 10/11 (64-bit)
+  - macOS 10.15 (Catalina) or newer
+  - Ubuntu 20.04 LTS or newer
+
+For large video files or batch processing, these enhanced specifications are recommended:
+- 32GB+ RAM
+- 8-core processor or better
+- NVIDIA GPU with 8GB+ VRAM (RTX series recommended)
+- SSD storage for faster file processing
+
 ### Setup
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/linkedin-learning-pipeline.git
-   cd linkedin-learning-pipeline
+   git clone https://github.com/yourusername/learning-pipeline.git
+   cd learning-pipeline
    ```
 
 2. Create a virtual environment (recommended):
@@ -148,7 +191,7 @@ Each step can be run independently or as part of the full pipeline.
 ## Folder Structure
 
 ```
-linkedin-learning-pipeline/
+learning-pipeline/
 ├── app/                        # Application modules
 │   ├── __init__.py            # Package initialization
 │   ├── generate_srt.py        # Video to SRT transcription
@@ -202,6 +245,25 @@ ui:
   show_progress_bars: true
   show_spinners: true
 ```
+
+### Logging Configuration
+```yaml
+logging:
+  level: "info"  # Options: debug, info, warning, error
+  log_to_file: true
+  log_to_console: false
+```
+
+The application uses a comprehensive logging system that:
+- Creates timestamped log files in the `logs` directory
+- Supports different logging levels (debug, info, warning, error)
+- Provides colored console output for better readability
+- Records detailed information including file and line numbers in log files
+
+You can access logs in the following ways:
+- Check the `logs` directory for timestamped log files (format: `pipeline-YYYYMMDD-HHMMSS.log`)
+- Enable console logging by setting `log_to_console: true` in the configuration
+- Adjust verbosity with the `level` setting
 
 ## Troubleshooting
 
