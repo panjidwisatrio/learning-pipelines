@@ -3,6 +3,10 @@ import os
 import sys
 from openai import OpenAI
 import config
+from app.logger import get_logger
+
+# Initialize logger for this module
+logger = get_logger("ai_summarizer")
 
 # Initialize OpenAI client with configuration from config.py
 client = OpenAI(
@@ -11,24 +15,38 @@ client = OpenAI(
 )
 model = config.openai_config.get("model")
 temperature = config.openai_config.get("temperature")
+logger.debug(f"OpenAI model initialized: {model} (temperature: {temperature})")
 
 
 def chat_with_qwen(messages):
-    completion = client.chat.completions.create(
-        messages=messages,
-        model=model,
-        temperature=temperature,
-    )
-    return completion.choices[0].message.content.strip()
+    logger.debug(f"Sending request to OpenAI API with model: {model}")
+    try:
+        completion = client.chat.completions.create(
+            messages=messages,
+            model=model,
+            temperature=temperature,
+        )
+        logger.debug("Successfully received response from OpenAI API")
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        logger.error(f"Error in OpenAI API call: {str(e)}", exc_info=True)
+        raise
 
 
 def extract_text(file_path):
-    with open(file_path, "r", encoding="utf-8") as file:
-        text = file.read()
-    return text
+    logger.debug(f"Extracting text from file: {file_path}")
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            text = file.read()
+        logger.debug(f"Successfully extracted {len(text)} characters from {file_path}")
+        return text
+    except Exception as e:
+        logger.error(f"Error extracting text from {file_path}: {str(e)}", exc_info=True)
+        raise
 
 
 def get_all_file(file_path):
+    logger.debug(f"Searching for TXT files in: {file_path}")
     all_files = []
     if os.path.isdir(file_path):
         for root, dirs, files in os.walk(file_path):
@@ -38,10 +56,13 @@ def get_all_file(file_path):
     elif os.path.isfile(file_path) and file_path.endswith(".txt"):
         all_files.append(file_path)
 
+    logger.debug(f"Found {len(all_files)} TXT files")
     return all_files
 
 
 def summarize_text(text):
+    logger.info(f"Summarizing text ({len(text)} characters)")
+    
     prompt_system = (
         "You are an expert video content analyst and summarizer. "
         "Your task is to create comprehensive, structured summaries of video transcripts that capture the full essence and value of the content."
@@ -104,8 +125,14 @@ def summarize_text(text):
         {"role": "system", "content": prompt_system},
         {"role": "user", "content": prompt_user},
     ]
-    summary = chat_with_qwen(messages)
-    return summary
+    logger.debug("Calling OpenAI API for text summarization")
+    try:
+        summary = chat_with_qwen(messages)
+        logger.debug(f"Successfully generated summary ({len(summary)} characters)")
+        return summary
+    except Exception as e:
+        logger.error(f"Failed to summarize text: {str(e)}")
+        raise
 
 
 def main():
@@ -120,15 +147,19 @@ def main():
 
     try:
         if not input_path:
+            logger.error("No input path provided")
             raise ValueError("Input path is required.")
 
+        logger.info(f"Starting summarization process for input: {input_path}")
         files = get_all_file(input_path)
 
         if not files:
+            logger.warning(f"No .txt files found in {input_path}")
             print(f"No .txt files found in {input_path}.")
             return
 
         for file in files:
+            logger.info(f"Processing file: {file}")
             print(f"Processing {file}...")
             text = extract_text(file)
             summary = summarize_text(text)
@@ -136,12 +167,17 @@ def main():
 
             # Save the summary to a new file
             summary_file = os.path.splitext(file)[0] + ".md"
+            logger.debug(f"Saving summary to: {summary_file}")
             with open(summary_file, "w", encoding="utf-8") as f:
                 f.write(summary)
 
+            logger.info(f"Summary saved to: {summary_file}")
             print(f"Summary saved to {summary_file}.")
 
+        logger.info("Summarization process completed successfully")
+
     except Exception as e:
+        logger.error(f"Error in summarization process: {str(e)}", exc_info=True)
         print(f"Error: {e}")
         sys.exit(1)
 

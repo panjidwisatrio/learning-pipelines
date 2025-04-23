@@ -21,7 +21,7 @@ processing:
   srt2txt:
     extract_text_only: true
     remove_timestamps: true
-    combine_sentences: true
+    combine_sentences: false
   
   # TXT to MD options
   txt2md:
@@ -39,7 +39,7 @@ processing:
 logging:
   level: "info"  # Options: debug, info, warning, error
   log_to_file: true
-  log_to_console: true
+  log_to_console: false
 
 # UI Options
 ui:
