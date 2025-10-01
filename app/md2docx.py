@@ -2,7 +2,6 @@
 import sys
 import os
 import argparse
-import pypandoc
 import config
 from pathlib import Path
 from app.logger import get_logger
